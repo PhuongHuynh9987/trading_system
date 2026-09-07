@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <title>Portfolio Strategy | The Ledger</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
+        <script src="{{ url_for('static', filename='static.js') }}"></script>
+    </head>
+
+    <body class="flex flex-col h-screen overflow-hidden">
+        <!-- Top Navigation Bar -->
+        <header class="w-full bg-white/70 backdrop-blur-xl border-b border-slate-200/50 shrink-0">
+            <div class="max-w-[1600px] mx-auto flex items-center justify-between px-6 h-14">
+                <!-- Brand -->
+                <div class="flex items-center gap-3 pr-8 border-r border-slate-200/50">
+                    <div class="w-7 h-7 rounded bg-primary flex items-center justify-center text-on-primary">
+                        <span class="material-symbols-outlined text-base">account_balance</span>
+                    </div>
+                    <div>
+                        <h1 class="text-base font-bold tracking-tighter text-slate-900 leading-none">The Ledger</h1>
+                        <p class="font-manrope uppercase tracking-widest text-[6px] text-on-surface-variant truncate">Institutional Grade</p>
+                    </div>
+                </div>
+                <!-- Primary Nav -->
+                <nav class="flex-1 flex items-center gap-6 px-8">
+                <a  href="/dashboard" class="flex items-center gap-2 py-4 text-slate-400 hover:text-primary transition-colors font-manrope font-bold text-[10px] uppercase tracking-widest" href="#">
+                <span class="material-symbols-outlined text-base">dashboard</span>
+                                Dashboard
+                            </a>
+                <a class="flex items-center gap-2 py-4 text-slate-400 hover:text-primary transition-colors font-manrope font-bold text-[10px] uppercase tracking-widest" href="#">
+                <span class="material-symbols-outlined text-base">show_chart</span>
+                                Markets
+                            </a>
+                <a href="/portfolio" class="flex items-center gap-2 py-4 text-slate-900 border-b-2 border-primary transition-colors font-manrope font-bold text-[10px] uppercase tracking-widest" href="#">
+                <span class="material-symbols-outlined text-base">account_balance_wallet</span>
+                                Portfolio
+                            </a>
+                <a class="flex items-center gap-2 py-4 text-slate-400 hover:text-primary transition-colors font-manrope font-bold text-[10px] uppercase tracking-widest" href="#">
+                <span class="material-symbols-outlined text-base">insights</span>
+                                Analytics
+                            </a>
+                </nav>
+                <!-- Tools & Profile -->
+                <div class="flex items-center gap-4">
+                <div class="relative w-40 mr-2 hidden md:block">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant truncate text-xs">search</span>
+                <input class="w-full bg-surface-container-low border-none rounded-lg pl-8 pr-4 py-1 text-[9px] font-label focus:ring-1 focus:ring-primary transition-all" placeholder="Quick search..." type="text"/>
+                </div>
+                <button class="p-1.5 hover:bg-slate-100 rounded-full transition-colors"><span class="material-symbols-outlined text-sm text-on-surface-variant truncate">notifications</span></button>
+                <div class="h-6 w-[1px] bg-slate-200/50 mx-1"></div>
+                <button class="bg-primary text-on-primary px-3 py-1.5 rounded text-[10px] font-bold font-manrope">
+                                Invest
+                            </button>
+                <img alt="User" class="w-7 h-7 rounded-full bg-slate-200 object-cover ml-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGtebshizfeWtIvWYhlOREFQkKE30XvwExOgPZYed0yKw-AerBPiR1BlnrIk9-aVpkx-tmWZxcbLviZoBihc9w4gFjaNgfynAMtphDH3Ul3HV5mTqYLBlJTwW_JYkanAR5wkScSIqNW5uz_4uR11VNQO4I7cCY1KsXTALDYDSP4NdG96Y2Nbc_w3eY44OLNtsauZgTKTOWg3cTIcXnT6cgSOY0Ugs2Srhz0xIeTUZzorjQwUwyT5kaY7-n_UKvXiPMeIwXkeu_rg0"/>
+                </div>
+            </div>
+        </header>
+
+        <!-- Compact Header Stats -->
+        <!-- <div class="bg-surface-container-low border-b border-slate-200/50 shrink-0">
+            <div class="max-w-[1600px] mx-auto px-1 py-1 flex items-center justify-between">
+                <div class="flex gap-10">
+                    <div>
+                        <p class="text-[8px] font-manrope uppercase tracking-[0.05em] text-on-surface-variant truncate mb-0.5">Total Equity</p>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-md font-extrabold font-headline tracking-tighter">$ {{ "{:,.2f}".format(equity | float) }}</h2>
+                            <span class="text-success font-bold text-[9px] flex items-center">
+                                <span class="material-symbols-outlined text-[10px]">trending_up</span> 
+                                12.4%
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-manrope uppercase tracking-[0.05em] text-on-surface-variant truncate mb-0.5">Unrealized P&amp;L</p>
+                        <h2 class="text-md font-extrabold font-headline tracking-tighter text-success">+$412,090.00</h2>
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-[8px] font-manrope uppercase tracking-[0.05em] text-on-surface-variant truncate mb-0.5">Volatility Index</p>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-md font-extrabold font-headline tracking-tighter">14.2</h2>
+                            <span class="px-1 py-0.5 rounded-sm bg-surface-container-highest text-[7px] font-bold uppercase">Low Risk</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-right hidden lg:block">
+                        <p class="text-[8px] font-manrope uppercase tracking-[0.05em] text-on-surface-variant truncate mb-0.5">Portfolio Health</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-20 h-1 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-success" style="width: 88%;"></div>
+                        </div>
+                        <span class="text-[9px] font-bold">88% Optimal</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        
+        <!-- Main Content Area: Responsive Flex Layout -->
+        <main class="flex-1 flex flex-col max-w-[1600px] mx-auto w-full px-2 py-4 overflow-hidden">
+            <section class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 overflow-hidden min-h-0 pt-2">
+
+                <!-- Left/Main Column -->
+                <div class = "lg:col-span-7 flex flex-col gap-2 overflow-hidden">
+                <!-- Supplementary Insights Row -->
+                    <section class="grid grid-cols-1 md:grid-cols-4 shrink-0 rounded-lg bg-white">
+                        <div class="p-1.5 flex border-r mx-2 flex-col justify-between group cursor-pointer transition-colors">
+                            <p class="text-[8px] font-bold uppercase tracking-[0.05em] text-on-surface-variant truncate">Total Equity</p>
+                            <div class="mt-0">
+                                <h2 class="text-md font-bold font-headline tracking-tighter">$ {{ "{:,.2f}".format(equity | float) }}</h2>
+                                <!-- <p classs="text-[8px] text-success font-bold mt-0.5">2.4% Yield on cost</p> -->
+                            </div>
+                        </div>
+                        <div class="p-1.5 flex flex-col border-r mx-2 justify-between group cursor-pointer transition-colors">
+                            <p class="text-[8px] font-bold uppercase tracking-[0.05em] text-on-surface-variant truncate">Annual Dividend</p>
+                            <div class="mt-0">
+                                <h3 class="text-md font-bold font-headline tracking-tighter">$58,220.14</h3>
+                                <!-- <p classs="text-[8px] text-success font-bold mt-0.5">2.4% Yield on cost</p> -->
+                            </div>
+                        </div>
+                        <div class="p-1.5 flex flex-col border-r mx-2 justify-between group cursor-pointer transition-colors">
+                            <p class="text-[8px] font-bold uppercase tracking-[0.05em] text-on-surface-variant truncate">Tax Loss Harvesting</p>
+                            <div class="mt-0">
+                            <h3 class="text-md font-bold text-error">-$12,400</h3>
+                            <!-- <p class="text-[8px] text-on-surface-variant truncate mt-0.5 font-medium">Available offset</p> -->
+                            </div>
+                        </div>
+                        <div class="p-1.5 flex flex-col justify-between group cursor-pointer transition-colors">
+                            <p class="text-[8px] font-bold uppercase tracking-[0.05em] text-on-surface-variant truncate">Cash Balance</p>
+                            <div class="mt-0">
+                                <h3 class="text-md font-bold">$184,000</h3>
+                                <!-- <p class="text-[8px] text-on-surface-variant truncate mt-0.5 font-medium">Deployment ready</p> -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Strategic Actions -->
+                    <!-- <section class="shrink-0 flex flex-col min-h-0">
+                        <div class="flex items-center justify-between mt-3 shrink-0">
+                            <h3 class="text-[10px] font-bold font-manrope uppercase tracking-widest text-on-surface-variant truncate flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-xs">bolt</span> 
+                                Priority Strategic Actions
+                            </h3>
+                        </div>
+                        <div onclick="openModal()"  class="bg-surface-container-low/30 rounded-lg ghost-border overflow-hidden flex flex-col max-h-[300px]">
+                            <div class="overflow-y-auto custom-scrollbar flex-1 divide-y divide-slate-200/50">
+                                <div class="bg-surface-container-lowest hover:bg-slate-50 transition-all cursor-pointer group flex items-center justify-between gap-4">
+                                    <div class="flex items-center gap-4 flex-1  px-3">
+                                        <div class="w-6 h-6 rounded-lg bg-success-container/10 flex flex-col items-center justify-center shrink-0">
+                                            <span class="text-[8px] font-extrabold text-success uppercase">Buy</span>
+                                        </div>
+                                        <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                                            <div class="flex gap-2 items-center">
+                                                <h3 class="font-bold text-[12px] text-slate-900">NVDA</h3>
+                                                <p class="text-[10px] text-on-surface-variant truncate truncate">Target $842. Strong AI momentum.</p>
+                                            </div>
+                                            <div class="flex gap-2 items-center">
+                                                <p class="text-[8px] uppercase font-bold text-on-surface-variant truncate mb-0.5">Cap Gain</p>
+                                                <p class="text-[10px] font-bold text-slate-900 text-success">+$22.4K</p>
+                                            </div>
+                                            <div class="flex gap-2 items-center">
+                                                <p class="text-[8px] uppercase font-bold text-on-surface-variant truncate mb-0.5">Price Target</p>
+                                                <p class="text-[10px] font-bold text-slate-900">$842.00</p>
+                                            </div>
+                                            <div class="flex gap-2 items-center">
+                                                <p class="text-[8px] uppercase font-bold text-on-surface-variant truncate mb-0.5">Confidence</p>
+                                                <p class="text-[10px] font-bold text-success">High</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-outlined text-slate-300 text-xs group-hover:text-primary transition-colors">arrow_forward</span>
+                                </div>
+                                <div class="bg-surface-container-lowest hover:bg-slate-50 transition-all cursor-pointer group flex items-center justify-between gap-4">
+                                    <div class="flex items-center gap-4 flex-1 px-3">
+                                        <div class="w-6 h-6 rounded-lg flex flex-col items-center justify-center shrink-0">
+                                            <span class="text-[8px] font-extrabold text-error uppercase">Sell</span>
+                                        </div>
+                                        <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                                            <div class="flex gap-2 items-center">
+                                                <h6 class="font-bold text-[12px] text-slate-900">META</h4>
+                                                <p class="text-[10px] text-on-surface-variant truncate truncate">Current profit +18.4%. Lock gains.</p>
+                                            </div>
+                                            <div class="flex gap-2 items-center">
+                                                <p class="text-[8px] uppercase font-bold text-on-surface-variant truncate mb-0.5">Cap Gain</p>
+                                                <p class="text-[10px] font-bold text-slate-900 text-success">+$22.4K</p>
+                                            </div>
+                                            
+                                            <div class="flex gap-2 items-center">
+                                                <p class="text-[8px] uppercase font-bold text-on-surface-variant truncate mb-0.5">Total Return</p>
+                                                <p class="text-[10px] font-bold text-slate-900 text-success">+18.4%</p>
+                                            </div>
+                                            <div class="flex gap-2 items-center">
+                                                <p class="text-[8px] uppercase font-bold text-on-surface-variant truncate mb-0.5">Risk Rating</p>
+                                                <p class="text-[10px] font-bold text-warning">Medium</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-outlined text-slate-300 text-xs group-hover:text-primary transition-colors">arrow_forward</span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-3 mr-1 shrink-0">
+                            <h3 class="text-[10px] font-bold font-manrope uppercase tracking-widest text-on-surface-variant truncate flex items-center gap-2"></h3>
+                            <button class="text-[9px] font-bold text-primary uppercase tracking-widest hover:underline">Execute All</button>
+                        </div>
+                    </section> -->
+
+                    <!-- News & Market Impact Section -->
+                    <section class="bg-white rounded-lg ghost-border p-2">
+                        <div class="flex items-center justify-between mb-2">
+                             <h3 class="text-[10px] font-bold font-manrope uppercase tracking-widest text-on-surface-variant truncate flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-xs">bolt</span> 
+                                Priority Strategic Actions
+                            </h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-[10px]">
+                                <thead>
+                                    <tr class="text-[7px] uppercase font-bold text-slate-400 border-b border-slate-100">
+                                        <th class="pb-2">Signal</th>
+                                        <th class="pb-2">Ticker</th>
+                                        <th class="pb-2">Reason</th>
+                                        <th class="pb-2">Price</th>
+                                        <th class="pb-2">Confidence</th>
+                                        <th class="pb-2">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100/50">
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <td class="py-2 text-[10px] font-extrabold text-success uppercase">Buy</td>
+                                        <td class="py-2 text-[10px] font-bold text-slate-900">AAPL</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Earnings beat; supply chain outlook strong.</td>
+                                        <td class="py-2 text-[10px] font-bold text-success">Positive</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">$182.50</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Execute</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <td class="py-2 text-[10px] font-extrabold text-error uppercase">Sell</td>
+                                        <td class="py-2 text-[10px] font-bold text-slate-900">TSLA</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Production delay rumors pressure shares.</td>
+                                        <td class="py-2 text-[10px] font-bold text-danger">Negative</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">$182.50</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Execute</td>                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <td class="py-2 text-[10px] font-extrabold text-warning uppercase">Hold</td>
+                                        <td class="py-2 text-[10px] font-bold text-slate-900">MSFT</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Cloud guidance steady; analyst keeps buy rating.</td>
+                                        <td class="py-2 text-[10px] font-bold text-warning">Neutral</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">$182.50</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Execute</td>                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- News & Market Impact Section -->
+                    <section class="bg-white rounded-lg ghost-border p-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-[8px] font-bold uppercase tracking-[0.05em] text-on-surface-variant truncate flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-xs">newspaper</span>
+                                📰 News & Market Impact
+                            </p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-[10px]">
+                                <thead>
+                                    <tr class="text-[7px] uppercase font-bold text-slate-400 border-b border-slate-100">
+                                        <th class="pb-2">Impact</th>
+                                        <th class="pb-2">Ticker</th>
+                                        <th class="pb-2">Headline</th>
+                                        <th class="pb-2">Sentiment</th>
+                                        <th class="pb-2">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100/50">
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <td class="py-2 text-[10px] font-bold text-success">+2.1%</td>
+                                        <td class="py-2 text-[10px] font-bold text-slate-900">AAPL</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Earnings beat; supply chain outlook strong.</td>
+                                        <td class="py-2 text-[10px] font-bold text-success">Positive</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">1h ago</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <td class="py-2 text-[10px] font-bold text-danger">-1.4%</td>
+                                        <td class="py-2 text-[10px] font-bold text-slate-900">TSLA</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Production delay rumors pressure shares.</td>
+                                        <td class="py-2 text-[10px] font-bold text-danger">Negative</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">3h ago</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <td class="py-2 text-[10px] font-bold text-warning">+0.6%</td>
+                                        <td class="py-2 text-[10px] font-bold text-slate-900">MSFT</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">Cloud guidance steady; analyst keeps buy rating.</td>
+                                        <td class="py-2 text-[10px] font-bold text-warning">Neutral</td>
+                                        <td class="py-2 text-[10px] text-on-surface-variant truncate">5h ago</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right column Wash Sale Monitoring (Relocated) -->
+                <div class="lg:col-span-5 flex flex-col gap-3 min-h-0 overflow-hidden ">
+                    <div class="p-1.5 group cursor-pointer transition-colors bg-white max-h-[300px] rounded-lg ghost-border">
+                        <p class="text-[8px] font-bold uppercase tracking-[0.05em] text-on-surface-variant truncate mb-3">⚠️ Wash Sale Monitoring</p>
+                        <div class="overflow-hidden">
+                            <table class="w-full text-left">
+                            <thead>
+                                <tr class="text-[7px] uppercase font-bold text-slate-400 border-b border-slate-100">
+                                <th class="pb-1">Ticker</th>
+                                <th class="pb-1">Date</th>
+                                <th class="pb-1 px-4 hidden md:table-cell">Days Remaining</th>
+                                <th class="pb-1 hidden md:table-cell">Exposure</th>
+                            </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                            <tr>
+                            <td class="py-1 text-[9px] font-bold text-slate-900">AAPL</td>
+                            <td class="py-1 text-[9px] font-medium text-on-surface-variant truncate">Oct 24, 2023</td>
+                            <td class="py-1 text-[9px] px-4 font-bold text-warning hidden md:table-cell">12 Days</td>
+                            <td class="py-1 text-[9px] font-medium text-on-surface-variant truncate hidden md:table-cell">$42,300</td>
+                            </tr>
+                            <tr>
+                            <td class="py-1 text-[9px] font-bold text-slate-900">TSLA</td>
+                            <td class="py-1 text-[9px] font-medium text-on-surface-variant truncate">Nov 12, 2023</td>
+                            <td class="py-1 text-[9px] px-4 font-bold text-success hidden md:table-cell">31 Days</td>
+                            <td class="py-1 text-[9px] font-medium text-on-surface-variant truncate hidden md:table-cell">$89,200</td>
+                            </tr>
+                            <tr>
+                            <td class="py-1 text-[9px] font-bold text-slate-900">MSFT</td>
+                            <td class="py-1 text-[9px] font-medium text-on-surface-variant truncate">Oct 30, 2023</td>
+                            <td class="py-1 text-[9px] px-4 font-bold text-warning hidden md:table-cell">18 Days</td>
+                            <td class="py-1 text-[9px] font-medium text-on-surface-variant truncate hidden md:table-cell">$12,400</td>
+                            </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-lowest rounded-lg ghost-border flex flex-col min-h-0 overflow-hidden">
+                    
+                        <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0">
+                            <p class="text-[8px] font-bold uppercase tracking-[0.05em] text-on-surface-variant truncate mb-3 p-2">💼 Recent Transactions</p>
+                            <table class="w-full text-left">
+                                <thead class="sticky top-0 bg-white z-10">
+                                    <tr class="text-[7px] uppercase font-bold text-slate-400 border-b border-slate-100">
+                                        <th class="px-2">Ticker</th>
+                                        <th class="px-2">Type</th>
+                                        <th class="px-2">Shares</th>
+                                        <th class="px-2">Prices</th>
+                                        <th class="px-2">Market Value</th>
+                                        <th class="px-2">G/L</th>
+                                    </tr>
+                                </thead>
+
+                                <!-- <thead>
+                                    <tr class="">
+                                    <th class="pb-1">Ticker</th>
+                                    <th class="pb-1">Date</th>
+                                    <th class="pb-1 px-4 hidden md:table-cell">Days Remaining</th>
+                                    <th class="pb-1 hidden md:table-cell">Exposure</th>
+                                </tr>
+                            </thead> -->
+                                <tbody class="divide-y divide-slate-100/50">
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer group">
+                                        <td class="px-2 py-1">
+                                            <p class="font-bold text-xs">AAPL</p>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold">BUY</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">5.44</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">244.5</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">$1,194,022.38</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] text-success font-bold"></span>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer group">
+                                        <td class="px-2 py-1">
+                                            <p class="font-bold text-xs">AAPL</p>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold">SELL</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">5.44</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">244.5</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">$1,194,022.38</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] text-error font-bold">-2.14%</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-slate-50 transition-colors cursor-pointer group">
+                                        <td class="px-2 py-1">
+                                            <p class="font-bold text-xs">GS</p>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold">SELL</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">5.44</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">244.5</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] font-bold ">$1,194,022.38</span>
+                                        </td>
+                                        <td class="px-1 py-1">
+                                            <span class="text-[10px] text-success font-bold">+10.14%</span>
+                                        </td>
+                                    </tr>
+
+                                    <!-- <tr class="hover:bg-slate-50 transition-colors cursor-pointer group">
+                                        <td class="px-1 py-1">
+                                        <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                                        <span class="material-symbols-outlined text-base">eco</span>
+                                        </div>
+                                        <div>
+                                        <p class="font-bold text-xs">Sustainable Energy</p>
+                                        <p class="text-[9px] text-on-surface-variant truncate font-label">TSLA, ENPH, NEE, SEDG</p>
+                                        </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-1 py-1">
+                                    <div class="flex items-center gap-3">
+                                    <div class="w-20 h-1 bg-surface-container rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary" style="width: 28%;"></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold">28.0%</span>
+                                    </div>
+                                    </td>
+                                    <td class="px-1 py-1">
+                                    <p class="font-bold text-xs">$796,014.92</p>
+                                    </td>
+                                    <td class="px-1 py-1">
+                                    <p class="text-[10px] text-error font-bold">-0.82%</p>
+                                    </td>
+                                    </tr> -->
+                                    <!-- <tr class="hover:bg-slate-50 transition-colors cursor-pointer group">
+                                    <td class="px-1 py-1">
+                                    <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                                    <span class="material-symbols-outlined text-base">account_balance</span>
+                                    </div>
+                                    <div>
+                                    <p class="font-bold text-xs">Financial Services</p>
+                                    <p class="text-[9px] text-on-surface-variant truncate font-label">JPM, GS, V, MA</p>
+                                    </div>
+                                    </div>
+                                    </td>
+                                    <td class="px-1 py-1">
+                                    <div class="flex items-center gap-3">
+                                    <div class="w-20 h-1 bg-surface-container rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary" style="width: 15%;"></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold">15.0%</span>
+                                    </div>
+                                    </td>
+                                    <td class="px-1 py-1">
+                                    <p class="font-bold text-xs">$426,436.56</p>
+                                    </td>
+                                    <td class="px-1 py-1">
+                                    <p class="text-[10px] text-success font-bold">+1.05%</p>
+                                    </td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2>Execute Trade</h2>
+                    <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+                        <h3 class="font-bold text-[12px] text-slate-900">NVDA</h3>
+                        <div class="flex gap-2 items-center">
+                            <p class="text-[10px] font-bold text-slate-900">$842.00</p>
+                        </div>
+                            <div class="w-10 h-10 rounded-lg bg-success-container/10 flex flex-col items-center justify-center shrink-0">
+                            <span class="text-[8px] font-extrabold text-success uppercase">Buy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Performance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('main') }}"><strong>📈 Algo Trading System</strong></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main') }}">Main</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('assets_page') }}">All Assets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('portfolio') }}">Portfolio Performance</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container-fluid py-2">
+        <!-- Header -->
+        <div class="row mb-2">
+            <div class="col-lg-12">
+                <h1 class="display-6">Portfolio Performance</h1>
+                <p class="text-muted small">Investment performance analysis</p>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="row mb-2 g-1">
+            <div class="col-lg-1-7 col-md-4 col-6">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <div class="small text-muted">Total Value</div>
+                        <div class="h5 text-primary mb-0">${{ equity }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1-7 col-md-4 col-6">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <div class="small text-muted">Return</div>
+                        <div class="h5 text-success mb-0">+12.5%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1-7 col-md-4 col-6">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <div class="small text-muted">Invested</div>
+                        <div class="h5 text-info mb-0">$450K</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1-7 col-md-4 col-6">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <div class="small text-muted">Realized</div>
+                        <div class="h5 text-success mb-0">+$45.2K</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1-7 col-md-4 col-6">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <div class="small text-muted">Unrealized</div>
+                        <div class="h5 text-warning mb-0">+$8.75K</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1-7 col-md-4 col-6">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <div class="small text-muted">Sharpe</div>
+                        <div class="h5 text-primary mb-0">2.15</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1-7 col-md-4 col-6">
+                <div class="card metric-card">
+                    <div class="card-body">
+                        <div class="small text-muted">Win Rate</div>
+                        <div class="h5 text-success mb-0">83.3%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2 g-2">
+            <!-- Performance Chart -->
+            <div class="col-lg-8">
+                <div class="card chart-card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0 small">Performance Over Time</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performanceChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asset Allocation -->
+            <div class="col-lg-4">
+                <div class="card chart-card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0 small">Asset Allocation</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="allocationChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2 g-2">
+            <!-- Sector Breakdown -->
+            <div class="col-lg-6">
+                <div class="card chart-card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0 small">Sector Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="sectorChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Returns -->
+            <div class="col-lg-6">
+                <div class="card chart-card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0 small">Monthly Returns</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlyChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Holdings Table -->
+        <div class="row mb-2">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0 small">Current Holdings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Ticker</th>
+                                        <th>Qty</th>
+                                        <th>Avg Cost</th>
+                                        <th>Current</th>
+                                        <th>Market Value</th>
+                                        <th>Gain/Loss</th>
+                                        <th>% Return</th>
+                                        <th>% Portfolio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>AAPL</strong></td>
+                                        <td>50</td>
+                                        <td>$175.20</td>
+                                        <td>$182.50</td>
+                                        <td>$9,125</td>
+                                        <td class="text-success">+$365</td>
+                                        <td class="text-success">+4.15%</td>
+                                        <td>10.2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>MSFT</strong></td>
+                                        <td>30</td>
+                                        <td>$360.15</td>
+                                        <td>$378.91</td>
+                                        <td>$11,367</td>
+                                        <td class="text-success">+$562</td>
+                                        <td class="text-success">+5.21%</td>
+                                        <td>12.7%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>TSLA</strong></td>
+                                        <td>20</td>
+                                        <td>$250.00</td>
+                                        <td>$245.30</td>
+                                        <td>$4,906</td>
+                                        <td class="text-danger">-$94</td>
+                                        <td class="text-danger">-1.88%</td>
+                                        <td>5.5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>GOOGL</strong></td>
+                                        <td>15</td>
+                                        <td>$135.80</td>
+                                        <td>$140.25</td>
+                                        <td>$2,104</td>
+                                        <td class="text-success">+$67</td>
+                                        <td class="text-success">+3.27%</td>
+                                        <td>2.4%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>AMZN</strong></td>
+                                        <td>25</td>
+                                        <td>$168.50</td>
+                                        <td>$175.80</td>
+                                        <td>$4,395</td>
+                                        <td class="text-success">+$183</td>
+                                        <td class="text-success">+4.32%</td>
+                                        <td>4.9%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Summary -->
+        <div class="row g-2">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0 small">Performance Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-item">
+                            <span>Total Return:</span>
+                            <strong class="text-success">+$56,950 (12.65%)</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Best Performer:</span>
+                            <strong>MSFT (+5.21%)</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Worst Performer:</span>
+                            <strong class="text-danger">TSLA (-1.88%)</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Win Rate:</span>
+                            <strong class="text-success">83.3%</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0 small">Risk Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-item">
+                            <span>Volatility:</span>
+                            <strong>14.8%</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Max Drawdown:</span>
+                            <strong class="text-danger">-8.5%</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Beta:</span>
+                            <strong>1.12</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Correlation to S&P500:</span>
+                            <strong>0.78</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-2 mt-2">
+        <p class="mb-0 small">&copy; 2026 Algorithmic Trading System.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='static.js') }}"></script>
+    <script>
+        // Performance Chart
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(perfCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: [450000, 455000, 460000, 468000, 475000, 480000, 485000, 490000, 495000, 500000, 505000, 506950],
+                    borderColor: '#0275d8',
+                    backgroundColor: 'rgba(2, 117, 216, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+
+        // Allocation Chart
+        const allocCtx = document.getElementById('allocationChart').getContext('2d');
+        new Chart(allocCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Stocks', 'Bonds', 'Cash', 'Other'],
+                datasets: [{
+                    data: [70, 15, 10, 5],
+                    backgroundColor: ['#28a745', '#ffc107', '#0275d8', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // Sector Chart
+        const sectorCtx = document.getElementById('sectorChart').getContext('2d');
+        new Chart(sectorCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Tech', 'Finance', 'Healthcare', 'Energy', 'Consumer'],
+                datasets: [{
+                    label: '% of Portfolio',
+                    data: [35, 20, 15, 15, 15],
+                    backgroundColor: ['#0275d8', '#28a745', '#ffc107', '#dc3545', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Monthly Returns Chart
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Monthly Return %',
+                    data: [2.5, 1.8, 2.1, 1.5, 2.3, 2.8],
+                    backgroundColor: ['#28a745', '#28a745', '#28a745', '#28a745', '#28a745', '#28a745']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+</body>
+</html>
