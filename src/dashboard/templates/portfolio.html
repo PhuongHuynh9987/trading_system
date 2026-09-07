@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body>
+<body class="app-page portfolio-page">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -311,8 +311,8 @@
                 datasets: [{
                     label: 'Portfolio Value',
                     data: [450000, 455000, 460000, 468000, 475000, 480000, 485000, 490000, 495000, 500000, 505000, 506950],
-                    borderColor: '#0275d8',
-                    backgroundColor: 'rgba(2, 117, 216, 0.1)',
+                    borderColor: '#0b7a75',
+                    backgroundColor: 'rgba(11, 122, 117, 0.12)',
                     tension: 0.4,
                     fill: true
                 }]
@@ -336,7 +336,7 @@
                 labels: ['Stocks', 'Bonds', 'Cash', 'Other'],
                 datasets: [{
                     data: [70, 15, 10, 5],
-                    backgroundColor: ['#28a745', '#ffc107', '#0275d8', '#6c757d']
+                    backgroundColor: ['#0b7a75', '#e6b44b', '#6b9db0', '#9aa9a7']
                 }]
             },
             options: {
@@ -354,7 +354,7 @@
                 datasets: [{
                     label: '% of Portfolio',
                     data: [35, 20, 15, 15, 15],
-                    backgroundColor: ['#0275d8', '#28a745', '#ffc107', '#dc3545', '#6c757d']
+                    backgroundColor: ['#0b7a75', '#6b9db0', '#e6b44b', '#d4634e', '#9aa9a7']
                 }]
             },
             options: {
@@ -373,7 +373,7 @@
                 datasets: [{
                     label: 'Monthly Return %',
                     data: [2.5, 1.8, 2.1, 1.5, 2.3, 2.8],
-                    backgroundColor: ['#28a745', '#28a745', '#28a745', '#28a745', '#28a745', '#28a745']
+                    backgroundColor: ['#0b7a75', '#0b7a75', '#0b7a75', '#0b7a75', '#0b7a75', '#0b7a75']
                 }]
             },
             options: {

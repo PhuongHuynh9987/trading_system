@@ -15,7 +15,7 @@
         }
     </style>
 </head>
-<body>
+<body class="app-page dashboard-page">
     <input type="hidden" name="currentPage" value="{{ request.path }}">
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -78,7 +78,7 @@
                 <div class="card summary-card">
                     <div class="card-body">
                         <div class="small text-muted">Account Equity</div>
-                        <div class="h5 text-success mb-0">${{ equity }}</div>
+                        <div class="h5 text-success mb-0">${{ "{:,.2f}".format(equity|float) }}</div>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,9 @@
                 <div class="card summary-card">
                     <div class="card-body">
                         <div class="small text-muted">Today's G/L</div>
-                        <div class="h5 text-info mb-0">+$2,450</div>
+                        <div class="h5 {{ 'text-success' if today_gain|float >= 0 else 'text-danger' }} mb-0">
+                            {{ '+' if today_gain|float >= 0 else '-' }}${{ "{:,.2f}".format(today_gain|abs|float) }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,7 +136,7 @@
                         <div class="col-lg-6">
                             <div class="section">
                                 <div class="section-header">
-                                    <h2 class="section-title">📊 Trading Recommendations</h2>
+                                    <h2 class="section-title">Trading recommendations</h2>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -192,7 +194,7 @@
                             <!-- TOP RIGHT: News -->
                             <div class="section">
                                 <div class="section-header">
-                                    <h2 class="section-title">📰 News & Market Impact</h2>
+                                    <h2 class="section-title">News & market impact</h2>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -238,7 +240,7 @@
                     <!-- Full-width wash-sale monitoring -->
                     <div class="section mt-3">
                         <div class="section-header">
-                            <h2 class="section-title">⚠️ Wash Sale Monitoring</h2>
+                            <h2 class="section-title">Wash sale monitoring</h2>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover">

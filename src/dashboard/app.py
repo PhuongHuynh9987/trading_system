@@ -57,6 +57,19 @@ def get_equity_value(trading_client):
         return 0.0
 
 
+def get_today_gain(trading_client):
+    """Return the account's change from the previous trading day's close."""
+    if not trading_client:
+        return 0.0
+    try:
+        account = trading_client.get_account()
+        equity = float(account.equity or 0)
+        last_equity = float(account.last_equity or account.equity or 0)
+        return equity - last_equity
+    except Exception:
+        return 0.0
+
+
 def get_cash_available(trading_client):
     if not trading_client:
         return 0.0
@@ -473,6 +486,7 @@ def dashboard():
     return render_template(
         "dashboard.html",
         equity=equity,
+        today_gain=get_today_gain(trading_client),
         wash_sale_events=get_wash_sale_events(trading_client),
     )
 
