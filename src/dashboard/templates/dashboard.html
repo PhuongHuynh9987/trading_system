@@ -96,7 +96,7 @@
                 <div class="card summary-card">
                     <div class="card-body">
                         <div class="small text-muted">Open Pos</div>
-                        <div class="h5 text-primary mb-0">12</div>
+                        <div class="h5 text-primary mb-0">{{ open_positions }}</div>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,9 @@
                 <div class="card summary-card">
                     <div class="card-body">
                         <div class="small text-muted">P/L %YTD</div>
-                        <div class="h5 text-success mb-0">+12.5%</div>
+                        <div class="h5 {{ 'text-success' if ytd_gain_percent is not none and ytd_gain_percent >= 0 else 'text-danger' if ytd_gain_percent is not none else 'text-muted' }} mb-0">
+                            {% if ytd_gain_percent is not none %}{{ "%+.2f"|format(ytd_gain_percent) }}%{% else %}N/A{% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -130,10 +132,10 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="dashboard-container">
-                    <!-- Left & Right Layout -->
+                    <!-- Single-column recommendations and news layout -->
                     <div class="row g-1">
-                        <!-- LEFT SIDE: Trading Recommendations -->
-                        <div class="col-lg-6">
+                        <!-- Trading Recommendations -->
+                        <div class="col-12">
                             <div class="section">
                                 <div class="section-header">
                                     <h2 class="section-title">Trading recommendations</h2>
@@ -144,54 +146,51 @@
                                             <tr>
                                                 <th>Signal</th>
                                                 <th>Ticker</th>
+                                                <th>Sector / industry</th>
                                                 <th>Price</th>
                                                 <th>Strength</th>
                                                 <th>Reason</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><span class="badge bg-success">BUY</span></td>
-                                                <td><strong>AAPL</strong></td>
-                                                <td>$182.50</td>
-                                                <td><strong>92%</strong></td>
-                                                <td>Bullish momentum</td>
+                                        <tbody id="recommendationsBody">
+                                            {% for item in recommendations %}
+                                            <tr class="recommendation-row">
+                                                <td><span class="badge {{ 'bg-success' if item.signal == 'BUY' else 'bg-danger' if item.signal == 'SELL' else 'bg-warning' }}">{{ item.signal }}</span></td>
+                                                <td><strong>{{ item.symbol }}</strong></td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-success execute-trade" data-symbol="AAPL" data-side="BUY" data-qty="1" data-bs-toggle="modal" data-bs-target="#tradeModal">
-                                                        Execute
+                                                    {{ item.sector }}
+                                                    {% if item.industry and item.industry != item.sector %}
+                                                    <small class="d-block text-muted">{{ item.industry }}</small>
+                                                    {% endif %}
+                                                </td>
+                                                <td>${{ "%.2f"|format(item.price) }}</td>
+                                                <td><strong>{{ item.strength }}%</strong></td>
+                                                <td>{{ item.reason }}</td>
+                                                <td>
+                                                    <button class="btn btn-sm {{ 'btn-success' if item.signal == 'BUY' else 'btn-danger' if item.signal == 'SELL' else 'btn-warning' }} execute-trade" data-symbol="{{ item.symbol }}" data-side="{{ 'SELL' if item.signal == 'SELL' else 'BUY' }}" data-qty="1" data-bs-toggle="modal" data-bs-target="#tradeModal">
+                                                        {{ 'Execute' if item.signal != 'HOLD' else 'Monitor' }}
                                                     </button>
                                                 </td>
                                             </tr>
+                                            {% else %}
                                             <tr>
-                                                <td><span class="badge bg-danger">SELL</span></td>
-                                                <td><strong>TSLA</strong></td>
-                                                <td>$245.30</td>
-                                                <td><strong>85%</strong></td>
-                                                <td>Overbought RSI</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-danger execute-trade" data-symbol="TSLA" data-side="SELL" data-qty="1" data-bs-toggle="modal" data-bs-target="#tradeModal">
-                                                        Execute
-                                                    </button>
-                                                </td>
+                                                <td colspan="7" class="text-center text-muted">Market data is unavailable for the current symbols.</td>
                                             </tr>
-                                            <tr>
-                                                <td><span class="badge bg-warning">HOLD</span></td>
-                                                <td><strong>MSFT</strong></td>
-                                                <td>$378.91</td>
-                                                <td><strong>68%</strong></td>
-                                                <td>Consolidation phase</td>
-                                                <td><button class="btn btn-sm btn-warning">Monitor</button></td>
-                                            </tr>
+                                            {% endfor %}
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center gap-2 mt-2" id="recommendationsPagination" hidden>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-pagination-previous>Previous</button>
+                                    <span class="small text-muted" data-pagination-status></span>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-pagination-next>Next</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- RIGHT SIDE: News & Wash Sale -->
-                        <div class="col-lg-6">
-                            <!-- TOP RIGHT: News -->
+                        <!-- News & Market Impact -->
+                        <div class="col-12">
                             <div class="section">
                                 <div class="section-header">
                                     <h2 class="section-title">News & market impact</h2>
@@ -200,37 +199,43 @@
                                     <table class="table table-hover">
                                         <thead class="table-dark">
                                             <tr>
-                                                <th>Impact</th>
+                                                <th>Market move</th>
                                                 <th>Ticker</th>
                                                 <th>Headline</th>
                                                 <th>Sentiment</th>
                                                 <th>Time</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><span class="badge bg-success">+2.3%</span></td>
-                                                <td><strong>AAPL</strong></td>
-                                                <td>Apple Announces New Product Line</td>
-                                                <td><span class="badge bg-success">Positive</span></td>
-                                                <td>2h ago</td>
+                                        <tbody id="newsBody">
+                                            {% for item in news %}
+                                            <tr class="news-row">
+                                                <td>
+                                                    {% if item.market_move is not none %}
+                                                    <span class="badge {{ 'bg-success' if item.market_move >= 0 else 'bg-danger' }}">{{ "%+.2f"|format(item.market_move) }}%</span>
+                                                    {% else %}
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td><strong>{{ item.symbol }}</strong></td>
+                                                <td>
+                                                    {% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
+                                                    <small class="d-block text-muted">{{ item.source }}</small>
+                                                </td>
+                                                <td><span class="badge {{ 'bg-success' if item.sentiment == 'Positive' else 'bg-danger' if item.sentiment == 'Negative' else 'bg-secondary' }}">{{ item.sentiment }} ({{ "%+.2f"|format(item.sentiment_score) }})</span></td>
+                                                <td>{{ item.published_at }}</td>
                                             </tr>
+                                            {% else %}
                                             <tr>
-                                                <td><span class="badge bg-danger">-1.8%</span></td>
-                                                <td><strong>TSLA</strong></td>
-                                                <td>Tesla Faces Supply Chain Challenges</td>
-                                                <td><span class="badge bg-danger">Negative</span></td>
-                                                <td>4h ago</td>
+                                                <td colspan="5" class="text-center text-muted">{{ news_error or 'No recent news found for the current holdings.' }}</td>
                                             </tr>
-                                            <tr>
-                                                <td><span class="badge bg-info">+0.5%</span></td>
-                                                <td><strong>MSFT</strong></td>
-                                                <td>Microsoft Partners with Industry Leader</td>
-                                                <td><span class="badge bg-info">Neutral</span></td>
-                                                <td>6h ago</td>
-                                            </tr>
+                                            {% endfor %}
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center gap-2 mt-2" id="newsPagination" hidden>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-pagination-previous>Previous</button>
+                                    <span class="small text-muted" data-pagination-status></span>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-pagination-next>Next</button>
                                 </div>
                             </div>
 
@@ -322,7 +327,54 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='static.js') }}"></script>
     <script>
+        window.setTimeout(function () {
+            window.location.href = window.location.pathname + '?refresh=' + Date.now();
+        }, 120000);
+
+        function setupPagination(bodyId, paginationId, rowSelector, pageSize) {
+            const body = document.getElementById(bodyId);
+            const pagination = document.getElementById(paginationId);
+            if (!body || !pagination) return;
+
+            const rows = Array.from(body.querySelectorAll(rowSelector));
+            const totalPages = Math.ceil(rows.length / pageSize);
+            if (totalPages <= 1) return;
+
+            const previousButton = pagination.querySelector('[data-pagination-previous]');
+            const nextButton = pagination.querySelector('[data-pagination-next]');
+            const status = pagination.querySelector('[data-pagination-status]');
+            let currentPage = 1;
+
+            function renderPage() {
+                const start = (currentPage - 1) * pageSize;
+                rows.forEach(function (row, index) {
+                    row.hidden = index < start || index >= start + pageSize;
+                });
+                previousButton.disabled = currentPage === 1;
+                nextButton.disabled = currentPage === totalPages;
+                status.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+                pagination.hidden = false;
+            }
+
+            previousButton.addEventListener('click', function () {
+                if (currentPage > 1) {
+                    currentPage -= 1;
+                    renderPage();
+                }
+            });
+            nextButton.addEventListener('click', function () {
+                if (currentPage < totalPages) {
+                    currentPage += 1;
+                    renderPage();
+                }
+            });
+            renderPage();
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            setupPagination('recommendationsBody', 'recommendationsPagination', '.recommendation-row', 5);
+            setupPagination('newsBody', 'newsPagination', '.news-row', 5);
+
             document.querySelectorAll('[role="alert"]').forEach(function (alert) {
                 setTimeout(function () {
                     bootstrap.Alert.getOrCreateInstance(alert).close();

@@ -10,6 +10,8 @@ load_dotenv()
 import os
 
 from execute_alpaca import AlpacaTradingClient
+from market_service import get_trading_recommendations
+from news_service import get_news_market_impact
 
 paper_account = 'PA3N0GG8CCZE'
 ALPACA_API_KEY = os.getenv("alpaca_api_key")
@@ -68,6 +70,25 @@ def get_today_gain(trading_client):
         return equity - last_equity
     except Exception:
         return 0.0
+
+
+def get_ytd_gain_percent(trading_client):
+    if not trading_client:
+        return None
+    try:
+        year_start = datetime.now(timezone.utc).replace(
+            month=1, day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        history = trading_client.get_portfolio_history(start=year_start)
+        profit_loss = [float(value or 0) for value in (history.profit_loss or [])]
+        equity = [float(value or 0) for value in (history.equity or []) if value is not None]
+        base_value = float(history.base_value or (equity[0] if equity else 0))
+        if not base_value:
+            return None
+        return sum(profit_loss) / base_value * 100
+    except Exception as e:
+        print(f"Error occurred while fetching YTD performance: {e}")
+        return None
 
 
 def get_cash_available(trading_client):
@@ -483,11 +504,30 @@ def main():
 def dashboard():
     trading_client = get_trading_client()
     equity = get_equity_value(trading_client)
+    holdings = [normalize_holding(holding) for holding in get_holdings(trading_client)]
+    held_symbols = [holding["symbol"] for holding in holdings if holding.get("symbol")]
+    watchlist = get_market_watchlist(trading_client, limit=10)
+    watchlist_symbols = [asset["symbol"] for asset in watchlist if asset.get("symbol")]
+    symbols = list(dict.fromkeys(held_symbols + watchlist_symbols))[:10]
+    sector_by_symbol = {
+        asset["symbol"]: asset.get("category") or "Unknown"
+        for asset in watchlist
+        if asset.get("symbol")
+    }
+    if trading_client:
+        sector_by_symbol = {}
+    recommendations = get_trading_recommendations(symbols, sector_by_symbol)
+    news, news_error = get_news_market_impact(symbols)
     return render_template(
         "dashboard.html",
         equity=equity,
         today_gain=get_today_gain(trading_client),
+        open_positions=len(holdings),
+        ytd_gain_percent=get_ytd_gain_percent(trading_client),
         wash_sale_events=get_wash_sale_events(trading_client),
+        recommendations=recommendations,
+        news=news,
+        news_error=news_error,
     )
 
 

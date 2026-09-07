@@ -1,5 +1,6 @@
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import GetAssetsRequest, GetOrdersRequest
+from alpaca.trading.requests import GetPortfolioHistoryRequest
 from alpaca.trading.enums import AssetClass
 from alpaca.trading.enums import QueryOrderStatus
 from alpaca.trading.requests import MarketOrderRequest
@@ -26,6 +27,14 @@ class AlpacaTradingClient:
 
     def get_account(self):
         return self.client.get_account()
+
+    def get_portfolio_history(self, start=None, end=None):
+        history_filter = GetPortfolioHistoryRequest(
+            start=start,
+            end=end,
+            timeframe="1D",
+        )
+        return self.client.get_portfolio_history(history_filter)
 
     def get_clock(self):
         return self.client.get_clock()
